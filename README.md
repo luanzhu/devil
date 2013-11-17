@@ -20,7 +20,7 @@ Devil depends on inotify to monitor incoming folder.  As a result, it will not b
 Build
 =====
 
-The only build environment I tried is GHC 7.4.1, cabal 1.14.0, cabal-dev 0.9.2. 
+The only build environment I tried was GHC 7.4.1, cabal 1.14.0, cabal-dev 0.9.2. 
 
 ```Shell
 cabal-dev install-deps
@@ -33,5 +33,46 @@ The resulted binary file is
 ```Shell
 dist/build/devil/devil
 ```
+
+Configuration
+=====
+
+Configuration file is in JSON format.  Here is an example with explanations.
+
+```JSON
+{
+    "incomingFolder": "/home/zhu/tmp",
+    "watchItems":
+    [
+        {
+            /*******************************************************************
+             * Each watch item should match a program managed by Angel.
+             * 
+             * binaryFileName is the file name devil watches in the 
+             * incoming folder.  The file name should be eaxactly the same as 
+             * the binary file managed by Angel.
+             * 
+             * Once a new or updated file is detected, devil will:
+             *      (1). update the program in the target folder;
+             *      (2). kill the running processes.
+             *
+             * PID file name follows the same name convention of Angel.  In this
+             * example, devil will try to read PID from rate.pid and 
+             * rate-?.pid (? denotes numbers).
+             *******************************************************************/
+            "binaryFileName": "rate",
+            "targetFolder": "/home/zhu/rate",
+            "pidFile": "/home/zhu/rate-web/rate.pid"
+        },
+        //You can have as many watch items as you
+        {
+            "binaryFileName": "app2",
+            "targetFolder": "/home/zhu/app2",
+            "pidFile": "/home/zhu/app2/app2.pid"
+        },
+    ]
+}
+```
+
 
 
