@@ -10,7 +10,7 @@ I really like Angel.  It is the best process monitor/management tool I have ever
 
 Devil is designed to handle program updates.  It will monitor an upcoming folder.  Whenever is new version is uploaded, it will update program and kill all running processes.  Angel will restart the program, thus to complete the update cycle.
 
-Another big motivation is to learn haskell as I am new to haskell and would like to do more projects in future.
+Another big motivation is to learn haskell as I am new to haskell and would like to do more projects in haskell in future.
 
 Supported System
 =====
@@ -41,6 +41,11 @@ Configuration file is in JSON format.  Here is an example with explanations.
 
 ```JSON
 {
+    /***************************************************************************
+     * Devil will monitor incomingFolder for file updates.  Whenever you need
+     * to update a program, you just need to upload the updated binary into 
+     * this folder.  Devil and Angel will take care of the restart process.
+     ***************************************************************************/
     "incomingFolder": "/home/zhu/tmp",
     "watchItems":
     [
@@ -64,7 +69,7 @@ Configuration file is in JSON format.  Here is an example with explanations.
             "targetFolder": "/home/zhu/rate",
             "pidFile": "/home/zhu/rate-web/rate.pid"
         },
-        //You can have as many watch items as you
+        //You can have as many watch items as you like
         {
             "binaryFileName": "app2",
             "targetFolder": "/home/zhu/app2",
@@ -73,6 +78,39 @@ Configuration file is in JSON format.  Here is an example with explanations.
     ]
 }
 ```
+
+Run the program
+=====
+
+This program is designed to work with screen.  To start it in a named but detached screen session:
+```Shell
+screen -S devil -d -m ./devil configure.json
+```
+
+To reconnect it with screen:
+```Shell
+screen -S devil -r
+```
+
+To detach from screen when you are inside a screen session:
+```Shell
+ctrl+a d
+```
+Sample output of devil:
+```Shell
+zhu@debian:~/devil$ ./dist/build/devil/devil configure.json
+Trying to load configuration from configure.json
+Configuration {incomingFolder = "/home/zhu/tmp", watchItems = [Item {binaryFileName = "rate", targetFolder = "/home/zhu/rate-web", pidFile = "/home/zhu/rate-web/rate.pid"}]}
+Watching incoming folder [/home/zhu/tmp]. Hit enter to terminate.
+****************File Change Detected****************
+Changes to [rate] was detected.
+Copied from [/home/zhu/tmp/rate] to [/home/zhu/rate-web/rate].
+Restore file mode for [/home/zhu/rate-web/rate].
+Process IDs to be killed: ["11182"]
+Killed!
+```
+
+
 
 
 
