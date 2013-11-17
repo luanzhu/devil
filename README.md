@@ -37,7 +37,9 @@ dist/build/devil/devil
 Configuration
 =====
 
-Configuration file is in JSON format.  Here is an example with explanations.
+Configuration file is in JSON format.  Here is an example with explanations. 
+
+__Please note: JSON does not allow for actual comments.  The comments in the following example are for explanations only.  The actual configuration file should not contain any comments.__
 
 ```JSON
 {
