@@ -71,7 +71,7 @@ watchForUpdatedFiles config = do
         [Close]
         (incomingFolder config)
         (fileUpdated config)
-    putStrLn $ "Watching incoming folder [" ++ (incomingFolder config) ++ "]. Hit enter to terminate."
+    putStrLn $ "Watching incoming folder [" ++ incomingFolder config ++ "]. Hit enter to terminate."
     _ <- getLine
     removeWatch wd
 
@@ -99,7 +99,7 @@ fileUpdated Configuration { incomingFolder=incomingDir, watchItems=items } Close
 
             pids <- getPIDs pFile
             case length pids of
-                0 -> do
+                0 ->
                     putStrLn "No PID was found.  Process is not running?"
                 _ -> do
                     putStrLn $ "Process IDs to be killed: " ++ show pids
@@ -107,24 +107,24 @@ fileUpdated Configuration { incomingFolder=incomingDir, watchItems=items } Close
                     (_,_,_,handle) <- createProcess $ proc "kill" args
                     exitCode <- waitForProcess handle
                     case exitCode of
-                        ExitSuccess -> do
-                            putStrLn $ "Killed!"
-                        ExitFailure c -> do
+                        ExitSuccess -> 
+                            putStrLn "Killed!"
+                        ExitFailure c -> 
                             putStrLn $ "Cannot kill one or more processes, exit code:" ++ show c ++ "."
                 
         -- The updated file in the upcoming folder is not related to any watch item
-        Nothing -> do return ()
-fileUpdated _ _ = do return ()
+        Nothing -> return ()
+fileUpdated _ _ = return ()
 
 -- | Get one or more process IDs from a file.  Angel PID file name convention is used.
 -- For example, give a process ID file "/home/zhu/yesod-app/app.pid", the following files will be checked:
 --      /home/zhu/yesod-app/app.pid
 --      /home/zhu/yesod-app/app-?.pid (where ? is a number)
-getPIDs :: String -> IO ([String])
+getPIDs :: String -> IO [String]
 getPIDs fileName = do
     let (dir, path) = splitFileName fileName
     files <- getDirectoryContents dir
-    let pidFiles = map (combine dir) $ filter (\x -> isPIDFile path x) files
+    let pidFiles = map (combine dir) $ filter (isPIDFile path) files
     --print pidFiles
     pids' <- mapM readFile pidFiles
     let pids = map (unpack.strip.decodeUtf8) pids'
@@ -173,7 +173,7 @@ main = do
         1 -> do
             config' <- getConfiguration $ head args
             case config' of
-                Nothing -> do
+                Nothing ->
                     putStrLn "Invalid configure.json!"
                 Just config -> do
                     print config
