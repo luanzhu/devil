@@ -113,7 +113,7 @@ fileUpdated Configuration { incomingFolder=incomingDir, watchItems=items } Close
                             exitCode <- waitForProcess handle
                             case exitCode of
                                 ExitSuccess ->
-                                    putStrLn $ "Process(es) killed!"
+                                    putStrLn  "Process(es) killed!"
                                 ExitFailure c ->
                                     putStrLn $ "Cannot kill one or more processes, exit code:" ++ show c ++ "."
                 ExitFailure n -> do
