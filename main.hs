@@ -95,7 +95,7 @@ fileUpdated Configuration { incomingFolder=incomingDir, watchItems=items } Close
             status <- getFileStatus targetFilePath
             let mode = fileMode status
             
-            (copyCode, stdoutString, stderrString) <- readProcessWithExitCode cpCommandPath [sourceFilePath, targetFilePath] ""
+            (copyCode, stdoutString, stderrString) <- readProcessWithExitCode cpCommandPath ["-f", sourceFilePath, targetFilePath] ""
             case copyCode of
                 ExitSuccess -> do
                     putStrLn $ "Copied from [" ++ sourceFilePath ++ "] to [" ++ targetFilePath ++ "]."
