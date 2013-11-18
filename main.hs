@@ -8,13 +8,15 @@ import Control.Applicative ((<$>), (<*>))
 import Control.Monad (mzero)
 import Data.List (find)
 import System.FilePath.Posix (combine, splitFileName)
-import System.Directory (copyFile, getDirectoryContents)
+import System.Directory (getDirectoryContents)
 import Data.List.Split (splitOn, splitOneOf)
-import System.Process (createProcess, proc, waitForProcess)
+import System.Process (createProcess, proc, waitForProcess, readProcessWithExitCode)
 import System.Exit (ExitCode(..))
 import System.Posix.Files (setFileMode, fileMode, getFileStatus)
 import System.INotify (initINotify, addWatch, Event(..), EventVariety(..), removeWatch)
 import System.Environment (getArgs)
+
+cpCommandPath = "/bin/cp"
 
 -- | The configuration for each binary to be monitored.
 data Item = Item {
@@ -92,25 +94,33 @@ fileUpdated Configuration { incomingFolder=incomingDir, watchItems=items } Close
             status <- getFileStatus targetFilePath
             let mode = fileMode status
             
-            copyFile sourceFilePath targetFilePath
-            putStrLn $ "Copied from [" ++ sourceFilePath ++ "] to [" ++ targetFilePath ++ "]."
-            setFileMode targetFilePath mode
-            putStrLn $ "Restore file mode for [" ++ targetFilePath ++ "]."
+            (copyCode, stdoutString, stderrString) <- readProcessWithExitCode cpCommandPath [sourceFilePath, targetFilePath] ""
+            case copyCode of
+                ExitSuccess -> do
+                    putStrLn $ "Copied from [" ++ sourceFilePath ++ "] to [" ++ targetFilePath ++ "]."
+                    setFileMode targetFilePath mode
+                    putStrLn $ "Restore file mode for [" ++ targetFilePath ++ "]."
 
-            pids <- getPIDs pFile
-            case length pids of
-                0 ->
-                    putStrLn "No PID was found.  Process is not running?"
-                _ -> do
-                    putStrLn $ "Process IDs to be killed: " ++ show pids
-                    let args = "-9" : pids
-                    (_,_,_,handle) <- createProcess $ proc "kill" args
-                    exitCode <- waitForProcess handle
-                    case exitCode of
-                        ExitSuccess -> 
-                            putStrLn "Killed!"
-                        ExitFailure c -> 
-                            putStrLn $ "Cannot kill one or more processes, exit code:" ++ show c ++ "."
+                    pids <- getPIDs pFile
+                    case length pids of
+                        0 -> do
+                            putStrLn "No PID was found.  Process is not running?"
+                        _ -> do
+                            putStrLn $ "Process IDs to be killed: " ++ show pids
+                            let args = "-9" : pids
+                            (_,_,_,handle) <- createProcess $ proc "kill" args
+                            exitCode <- waitForProcess handle
+                            case exitCode of
+                                ExitSuccess -> do
+                                    putStrLn $ "Process(es) killed!"
+                                ExitFailure c -> do
+                                    putStrLn $ "Cannot kill one or more processes, exit code:" ++ show c ++ "."
+                ExitFailure n -> do
+                    putStrLn $ "Cannot copy from [" ++ sourceFilePath ++ "] to [" ++ targetFilePath ++ "]."
+                    putStrLn $ "/bin/cp exit code: " ++ show n
+                    putStrLn $ "           stdout: " ++ stdoutString
+                    putStrLn $ "           stderr: " ++ stderrString
+                    putStrLn $ "Cannot continue, target is NOT updated. NO process was killed!"
                 
         -- The updated file in the upcoming folder is not related to any watch item
         Nothing -> return ()
@@ -174,7 +184,7 @@ main = do
             config' <- getConfiguration $ head args
             case config' of
                 Nothing ->
-                    putStrLn "Invalid configure.json!"
+                    putStrLn "Invalid configure json file!"
                 Just config -> do
                     print config
                     watchForUpdatedFiles config
