@@ -16,6 +16,7 @@ import System.Posix.Files (setFileMode, fileMode, getFileStatus)
 import System.INotify (initINotify, addWatch, Event(..), EventVariety(..), removeWatch)
 import System.Environment (getArgs)
 
+cpCommandPath :: String
 cpCommandPath = "/bin/cp"
 
 -- | The configuration for each binary to be monitored.
@@ -103,7 +104,7 @@ fileUpdated Configuration { incomingFolder=incomingDir, watchItems=items } Close
 
                     pids <- getPIDs pFile
                     case length pids of
-                        0 -> do
+                        0 ->
                             putStrLn "No PID was found.  Process is not running?"
                         _ -> do
                             putStrLn $ "Process IDs to be killed: " ++ show pids
@@ -111,16 +112,16 @@ fileUpdated Configuration { incomingFolder=incomingDir, watchItems=items } Close
                             (_,_,_,handle) <- createProcess $ proc "kill" args
                             exitCode <- waitForProcess handle
                             case exitCode of
-                                ExitSuccess -> do
+                                ExitSuccess ->
                                     putStrLn $ "Process(es) killed!"
-                                ExitFailure c -> do
+                                ExitFailure c ->
                                     putStrLn $ "Cannot kill one or more processes, exit code:" ++ show c ++ "."
                 ExitFailure n -> do
                     putStrLn $ "Cannot copy from [" ++ sourceFilePath ++ "] to [" ++ targetFilePath ++ "]."
                     putStrLn $ "/bin/cp exit code: " ++ show n
                     putStrLn $ "           stdout: " ++ stdoutString
                     putStrLn $ "           stderr: " ++ stderrString
-                    putStrLn $ "Cannot continue, target is NOT updated. NO process was killed!"
+                    putStrLn   "Cannot continue, target is NOT updated. NO process was killed!"
                 
         -- The updated file in the upcoming folder is not related to any watch item
         Nothing -> return ()
