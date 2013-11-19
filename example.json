@@ -1,0 +1,12 @@
+{
+    "incomingFolder": "/home/zhu/apps/incoming",
+    "watchItems":
+    [
+        {
+            "binaryFileName": "rate",
+            "targetFolder": "/home/zhu/apps/rate",
+            "pidFile": "/home/zhu/apps/rate/rate.pid"
+        }
+        
+    ]
+}
