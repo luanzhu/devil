@@ -8,14 +8,14 @@ Why?
 
 I really like Angel.  It is the best process monitor/management tool I have ever used.  I have been using it to manage several small yesod applications and cannot be happier with its stability and performance.  Angel can do a lot of things for you automagically.  However, one thing it does not do is to restart your program after you upload a new version.
 
-Devil is designed to handle program updates.  It will monitor an upcoming folder.  Whenever is new version is uploaded, it will update program and kill its all running processes.  Angel will restart the program, thus to complete the update cycle.
+Devil is designed to handle program updates.  It will monitor an upcoming folder.  Whenever a new version is uploaded, it will update program and kill its all running processes.  Angel will restart the program, thus to complete the update cycle.
 
 Another big motivation is to learn haskell and have some fun.  Even though I am new to haskell, I find it is a very fun language to play with.
 
 Supported System
 =====
 
-Devil depends on inotify to monitor incoming folder.  As a result, it will not be compiled on a system without inotify.  It was tested on Debian 7 with GHC 7.4.1.
+Devil depends on inotify to monitor incoming folder.  As a result, it cannot be compiled on a system without inotify.  It was tested on Debian 7 with GHC 7.4.1.
 
 Build
 =====
