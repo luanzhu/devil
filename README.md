@@ -20,12 +20,19 @@ Devil depends on inotify to monitor incoming folder.  As a result, it cannot be 
 Build
 =====
 
-The only build environment I tried was GHC 7.4.1, cabal 1.14.0, cabal-dev 0.9.2. 
+The only build environment I tried was GHC 7.4.1, cabal 1.18.1.2. Run these command in the project's folder.
 
 ```Shell
 cabal-dev install-deps
 cabal-dev configure
 cabal-dev build
+```
+Cabal 1.18 or later has the sandbox feature built-in. I had problems with cabal-dev and could not get the ghci working. Switching to cabal sandbox fixed the problem.
+```Shell
+cabal sandbox init
+cabal install --only-dependencies
+cabal configure
+cabal build
 ```
 
 The resulted binary file is
