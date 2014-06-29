@@ -1,5 +1,5 @@
 name:                   devil
-version:                0.1.0.0
+version:                0.1.1.0
 synopsis:               A small tool to make it easier to update program managed by Angel.
 description:            @Devil@ is a small tool to make it easier to update programs managed 
                         by Angel (the excellent process monitor/management tool).  Angel 
