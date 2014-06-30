@@ -15,12 +15,12 @@ Another big motivation is to learn haskell and have some fun.  Even though I am 
 Supported System
 =====
 
-Devil depends on inotify to monitor incoming folder.  As a result, it cannot be compiled on a system without inotify.  It was tested on Debian 7 with GHC 7.4.1.
+Devil depends on inotify to monitor incoming folder.  As a result, it cannot be compiled on a system without inotify.  It was tested on Debian 7 with GHC 7.4.1, and 7.8.2.
 
 Build
 =====
 
-The only build environment I tried was GHC 7.4.1, cabal 1.18.1.2. Run these command in the project's folder.
+The build environments I tried included GHC 7.4.1 with cabal 1.18.1.2, and GHC 7.8.2 with cabal 1.20.0.1. Run these command in the project's folder.
 
 ```Shell
 cabal-dev install-deps
@@ -39,6 +39,15 @@ The resulted binary file is
 
 ```Shell
 dist/build/devil/devil
+```
+
+Alternatively, if you just like to build the binary with cabal sandbox, you can try:
+```Shell
+mkdir devil-bin
+cd devil-bin
+cabal sandbox init
+cabal install devil
+#binary file will be installed into ".cabal-sandbox/bin"
 ```
 
 Configuration
